@@ -55,13 +55,6 @@ def initGrafo(G, num):
     return 
 
 
-
-
-
-
-
-
-
 #Best First Search
 def Best_First_Search(start, target, graph, res, queue = [], visited = []):
     if start not in visited:
