@@ -10,14 +10,14 @@ import os
 
 def delNodes(G, porcentaje, cantidad_nodos, ini, fin):
     porcentajeInt = math.floor((cantidad_nodos-2)*porcentaje/100)
+    print("Porcentaje",porcentajeInt)
     eliminados=[]
+    nodo_eliminado=-1
     for i in range(0,porcentajeInt):
-        nodo_eliminado=random.randint(0, cantidad_nodos-1)
-        if(nodo_eliminado != ini and nodo_eliminado != fin and eliminados.count(nodo_eliminado)==0):
-            G.remove_node(nodo_eliminado)
-            eliminados.append(nodo_eliminado)
-        else:
-            continue
+        while nodo_eliminado == ini or nodo_eliminado == fin or eliminados.count(nodo_eliminado)!=0 or nodo_eliminado==-1:
+            nodo_eliminado=random.randint(0, cantidad_nodos-1)
+        G.remove_node(nodo_eliminado)
+        eliminados.append(nodo_eliminado)
     return len(eliminados)
 
 def initGrafo(G, num):
@@ -81,7 +81,7 @@ def bfs(Grafo,inicio,fin,visitados):
         for x in Grafo[padre]:
             if(visitados.count(x)==0 and camino.count(x)==0):
                 camino.append(x)
-        if(len(camino)==0):
+        if(len(camino)==0 and padre!=fin):
             print("No hay solucion")
             return -1
         padre=camino.pop(0)
@@ -89,8 +89,8 @@ def bfs(Grafo,inicio,fin,visitados):
         
         if(visitados.count(padre)==0):
             visitados.append(padre)
-    print(pasos)
-    print(visitados)
+    print("La cantidad de pasos es: ",pasos)
+    print("Los nodos que hemos visitado son: ",visitados)
 
 #DFS 
 def dfs(Grafo,inicio,fin,visitados):
@@ -105,19 +105,22 @@ def dfs(Grafo,inicio,fin,visitados):
         for x in Grafo[padre]:
             if(visitados.count(x)==0 and camino.count(x)==0):
                 camino.insert(0,x)
-        
+        if(len(camino)==0 and padre!=fin):
+            print("No hay solucion")
+            return -1
         padre=camino.pop(0)
         pasos=pasos+1
         
         if(visitados.count(padre)==0):
             visitados.append(padre)
-    print(pasos)
+    print("La cantidad de pasos es: ",pasos)
+    print("Los nodos que hemos visitado son: ",visitados)
 
 
 G = nx.Graph()
 visitados=[]
 
-print("Elige el tamaño del grafo: ")
+print("Elige el tamaÃ±o del grafo: ")
 tam = int(input())
 numero_nodos=initGrafo(G, tam)
 
@@ -128,7 +131,7 @@ fin = int(input("fin -> "))
 print("Escriba el porcentaje de nodos a eliminar:")
 porcentaje = int(input())
 eliminados=delNodes(G,porcentaje,numero_nodos,inicio,fin)
-print(eliminados)
+print("Se han eliminado ",eliminados," nodos")
 nx.draw(G, nx.get_node_attributes(G, 'pos'),node_color = "blue", with_labels=True,node_size=20,font_size=7)
 plt.show()
 
@@ -161,7 +164,3 @@ if(opcion == 2):
 
     nx.draw(G, nx.get_node_attributes(G, 'pos'),node_color = color_map, with_labels=True,node_size=20,font_size=7)
     plt.show()
-
-
-
-
