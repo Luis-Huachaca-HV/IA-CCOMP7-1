@@ -108,7 +108,7 @@ def main():
     numero_nodos=initGrafo(G, tam)
     
     
-    start_node, end_node = get_start_end_nodes(G)
+    start_node, end_node = get_start_end_nodes(G)#we got the first drawing on this funcition, for the click
     
     # Find the shortest path using A*
     shortest_path = find_shortest_path(G, start_node, end_node)
