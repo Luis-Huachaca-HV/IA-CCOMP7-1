@@ -95,7 +95,7 @@ def find_shortest_path(graph, start, end):
     nx.set_node_attributes(graph, 0, 'weight')
 
     # Compute the shortest path using A*
-    path = nx.astar_path(graph, start, end, heuristic=lambda u, v: graph.nodes[v]['weight'])
+    path = nx.astar_path(graph, start, end, heuristic=lambda u, v: graph.nodes[v]['weight'])// here we define the shortest path given the algoritm
     return path
 
 
@@ -116,7 +116,9 @@ def main():
     # Draw the final graph with the shortest path highlighted
     plt.clf() # Clear the previous graph
     pos = nx.get_node_attributes(G, 'pos') # get the grid positions of each node
+    // here we print the normal graph giving a yellow look on the node we clicked on
     nx.draw_networkx(G, pos, node_color=['yellow' if node == start_node else 'green' if node == end_node else 'white' for node in G.nodes()])
+    // once the clicks have given, we highlight the edges of the given path that the algorithm gave us
     nx.draw_networkx_edges(G, pos, edgelist=[(shortest_path[i], shortest_path[i+1]) for i in range(len(shortest_path)-1)], edge_color='r', width=2)
     plt.show()
 
