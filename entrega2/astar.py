@@ -89,15 +89,133 @@ def get_start_end_nodes(graph):
                 end_node = node
     
     return start_node, end_node
-
-def find_shortest_path(graph, start, end):
+### manhattan heuristic
+def find_shortest_path_man(graph, start, end):
     # Set the weight attribute for all nodes in the graph
     nx.set_node_attributes(graph, 0, 'weight')
-
-    # Compute the shortest path using A*
-    path = nx.astar_path(graph, start, end, heuristic=lambda u, v: graph.nodes[v]['weight'])# here we define the shortest path given the algoritm
-    return path
-
+    
+    # Initialize the open and closed sets
+    open_set = set()
+    closed_set = set()
+    
+    # Add the start node to the open set
+    open_set.add(start)
+    
+    # Create a dictionary to keep track of the parent node for each node in the path
+    parents = {}
+    
+    # Set the weight of the start node to 0
+    graph.nodes[start]['weight'] = 0
+    
+    # While the open set is not empty
+    while len(open_set) > 0:
+        # Find the node in the open set with the lowest f-score
+        current = None
+        for node in open_set:
+            if current is None or graph.nodes[node]['weight'] + graph.nodes[node]['h'] < graph.nodes[current]['weight'] + graph.nodes[current]['h']:
+                current = node
+        
+        # If we've reached the end node, we're done
+        if current == end:
+            path = []
+            while current in parents:
+                path.append(current)
+                current = parents[current]
+            path.append(start)
+            path.reverse()
+            return path
+        
+        # Move the current node from the open set to the closed set
+        open_set.remove(current)
+        closed_set.add(current)
+        
+        # Check all the neighbors of the current node
+        for neighbor in graph.neighbors(current):
+            # If the neighbor is in the closed set, skip it
+            if neighbor in closed_set:
+                continue
+            
+            # Compute the tentative g-score for the neighbor
+            tentative_g_score = graph.nodes[current]['weight'] + graph[current][neighbor]['peso']
+            
+            # If the neighbor is not in the open set, add it
+            if neighbor not in open_set:
+                open_set.add(neighbor)
+                parents[neighbor] = current
+                graph.nodes[neighbor]['weight'] = tentative_g_score
+                graph.nodes[neighbor]['h'] = math.sqrt((graph.nodes[neighbor]['pos'][0] - graph.nodes[end]['pos'][0])**2 + (graph.nodes[neighbor]['pos'][1] - graph.nodes[end]['pos'][1])**2)
+            # If the neighbor is already in the open set, update its g-score if this path is better
+            elif tentative_g_score < graph.nodes[neighbor]['weight']:
+                parents[neighbor] = current
+                graph.nodes[neighbor]['weight'] = tentative_g_score
+    
+    # If we reach this point, there is no path from the start node to the end node
+    return None
+##euclidean heuristic
+def find_shortest_path_euc(graph, start, end):
+    # Set the weight attribute for all nodes in the graph
+    nx.set_node_attributes(graph, 0, 'weight')
+    
+    # Initialize the open and closed sets
+    open_set = set()
+    closed_set = set()
+    
+    # Add the start node to the open set
+    open_set.add(start)
+    
+    # Create a dictionary to keep track of the parent node for each node in the path
+    parents = {}
+    
+    # Set the weight of the start node to 0
+    graph.nodes[start]['weight'] = 0
+    
+    # While the open set is not empty
+    while len(open_set) > 0:
+        # Find the node in the open set with the lowest f-score
+        current = None
+        for node in open_set:
+            if current is None or graph.nodes[node]['weight'] + graph.nodes[node]['h'] < graph.nodes[current]['weight'] + graph.nodes[current]['h']:
+                current = node
+        
+        # If we've reached the end node, we're done
+        if current == end:
+            path = []
+            while current in parents:
+                path.append(current)
+                current = parents[current]
+            path.append(start)
+            path.reverse()
+            return path
+        
+        # Move the current node from the open set to the closed set
+        open_set.remove(current)
+        closed_set.add(current)
+        
+        # Check all the neighbors of the current node
+        for neighbor in graph.neighbors(current):
+            # If the neighbor is in the closed set, skip it
+            if neighbor in closed_set:
+                continue
+            
+            # Compute the tentative g-score for the neighbor
+            tentative_g_score = graph.nodes[current]['weight'] + graph[current][neighbor]['peso']
+            
+            # If the neighbor is not in the open set, add it
+            if neighbor not in open_set:
+                open_set.add(neighbor)
+                parents[neighbor] = current
+                graph.nodes[neighbor]['weight'] = tentative_g_score
+                graph.nodes[neighbor]['h'] = math.sqrt((graph.nodes[neighbor]['pos'][0] - graph.nodes[end]['pos'][0])**2 + (graph.nodes[neighbor]['pos'][1] - graph.nodes[end]['pos'][1])**2)
+            # If the neighbor is already in the open set, update its g-score if this path is better
+            elif tentative_g_score < graph.nodes[neighbor]['weight']:
+                parents[neighbor] = current
+                graph.nodes[neighbor]['weight'] = tentative_g_score
+        # Replace the Manhattan heuristic with Euclidean distance
+        if 'h' in graph.nodes[neighbor]:
+            graph.nodes[neighbor]['h'] = math.sqrt((graph.nodes[neighbor]['pos'][0] - graph.nodes[end]['pos'][0])**2 + (graph.nodes[neighbor]['pos'][1] - graph.nodes[end]['pos'][1])**2)
+    
+    # If we reach this point, there is no path from the start node to the end node
+    return None
 
 def main():
     G = nx.Graph()
@@ -108,17 +226,15 @@ def main():
     numero_nodos=initGrafo(G, tam)
     
     
-    start_node, end_node = get_start_end_nodes(G)#we got the first drawing on this funcition, for the click
+    start_node, end_node = get_start_end_nodes(G)
     
     # Find the shortest path using A*
-    shortest_path = find_shortest_path(G, start_node, end_node)
+    shortest_path = find_shortest_path_man(G, start_node, end_node)
     
     # Draw the final graph with the shortest path highlighted
     plt.clf() # Clear the previous graph
     pos = nx.get_node_attributes(G, 'pos') # get the grid positions of each node
-    # here we print the normal graph giving a yellow look on the node we clicked on
     nx.draw_networkx(G, pos, node_color=['yellow' if node == start_node else 'green' if node == end_node else 'white' for node in G.nodes()])
-    # once the clicks have given, we highlight the edges of the given path that the algorithm gave us
     nx.draw_networkx_edges(G, pos, edgelist=[(shortest_path[i], shortest_path[i+1]) for i in range(len(shortest_path)-1)], edge_color='r', width=2)
     plt.show()
 
