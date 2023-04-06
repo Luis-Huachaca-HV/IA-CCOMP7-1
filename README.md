@@ -5,3 +5,5 @@ Integrantes:
   - Paolo Rafael Delgado Vidal
   - Sebastian Tinajeros Estrada
   - Luis Fredy Huachaca Vargas
+Trabajo 1: entrega1/main_vfinal
+Trabajo 2: entrega2/version_final
