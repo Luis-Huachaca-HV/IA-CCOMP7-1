@@ -1,0 +1,5 @@
+﻿  Perceptron_cpp.cpp
+E:\UCSP CCOMP\IA\Perceptron_cpp\Perceptron_cpp\Perceptron_cpp.cpp(107,26): warning C4244: 'return': conversión de 'double' a 'int'; posible pérdida de datos
+E:\UCSP CCOMP\IA\Perceptron_cpp\Perceptron_cpp\Perceptron_cpp.cpp(127,75): warning C4244: '-=': conversión de 'double' a 'float'; posible pérdida de datos
+E:\UCSP CCOMP\IA\Perceptron_cpp\Perceptron_cpp\Perceptron_cpp.cpp(129,43): warning C4244: '-=': conversión de 'double' a 'int'; posible pérdida de datos
+  Perceptron_cpp.vcxproj -> E:\UCSP CCOMP\IA\Perceptron_cpp\x64\Debug\Perceptron_cpp.exe
